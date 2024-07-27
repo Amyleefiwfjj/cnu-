@@ -1,102 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+//BrowserRouter을 router이라는 이름으로 가져옴
+//routes: 여러 route들을 그룹홯여 네비게이션을 정의하는데 사용
+//route: 특정 경로와 해당 경로에서 렌더링될 컴포넌트 정의
+import Home from './pages/Home/Home';
+import Login from './components/Login/Login';
+import SignUp from './components/SignUp/SignUp';
+import Dashboard from './pages/Dashboard/Dashboard';
+//home,login,signup,dashboard: 각 경로에 대해 렌더링될 페이지 컴포넌트
 import './App.css';
-import PasswordRecovery from './PasswordRecovery';
-
 
 function App() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [error, setError] = useState('');
-  const [isFindingPassword, setIsFindingPassword] = useState(false);
-
-
-  const handleLogin = () => {
-    if (username && password) {
-      setIsLoggedIn(true);
-      setError('');
-    } else {
-      setError('아이디와 비밀번호를 입력해주세요.');
-    }
-  };
-
-  const handleLogout = () => {
-    setUsername('');
-    setPassword('');
-    setIsLoggedIn(false);
-    setError('');
-  };
-
-  useEffect(() => {
-    const handleGlobalKeyDown = (event) => {
-      if (event.key === 'Enter') {
-        if (isLoggedIn) {
-          handleLogout();
-        } else {
-          handleLogin();
-        }
-      }
-    };
-    window.addEventListener('keydown', handleGlobalKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleGlobalKeyDown);
-    };
-  }, [isLoggedIn, username, password]);
-
-  const handleFindCredentials = () => {
-    setIsFindingPassword(true);
-  };
-
-  const handleSignUp = () => {
-    console.log('회원가입하기');
-    // 이곳에 회원가입 로직을 추가하세요.
-  };
-
   return (
-    <div className="login-container">
-      {isLoggedIn ? (
-        <>
-          <h2>로그인되었습니다!</h2>
-          <button className="logout-button"
-            onClick={handleLogout}
-          >
-            로그아웃
-          </button>
-        </>
-      ) : isFindingPassword ? (
-        <PasswordRecovery onCancel={() => setIsFindingPassword(false)} />
-      ) : (
-        <>
-          <input
-            type="text"
-            placeholder="아이디"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="input-box"
-          />
-          <input
-            type="password"
-            placeholder="비밀번호"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="input-box"
-          />
-          <button
-            className="login-button"
-            onClick={handleLogin}
-          >로그인</button>
-          {error && <p className="error-message">{error}</p>}
-          <div className="extra-buttons">
-            <button className="text-button" onClick={handleFindCredentials}>
-              비밀번호 찾기
-            </button>
-            <button className="text-button" onClick={handleSignUp}>
-              회원가입하기
-            </button>
-          </div>
-        </>
-      )}
-    </div>
+    <Router>//url변화를 감지하고 적절한 라우트를 렌더링함 - browserrouter을 사용하여 url관리
+      <div className="App">
+      //해당 div요소에 App이라는 css클래스를 적용한다(react에서는 class 대신 classname을 사용)
+        <Routes>//여러 route를 감싸는 역할 - 네비게이션 트리
+          <Route path="/" element={<Home />} />
+          //path="/":루트경로-사용자에게 첫번째로 보여지는 페이지(일반적으로 애플리케이션의 홈페이지)
+          //home컴포넌트가 렌더링됨
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
